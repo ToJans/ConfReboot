@@ -40,7 +40,8 @@ namespace ConfReboot.Specs
             sut.Given(x => x.ConferenceRegistered(ConferenceId: "conferences/1", Name: "SomeConf", StartDate: startdate, MaxSeats: 100),
                       x => x.SeatsReserved(ConferenceId: "conferences/1", OrderId: "orders/1", Amount: 94));
             sut.When(x => x.RegisterOrder(ConferenceId: "conferences/1", OrderId: "orders/2", Amount: 10));
-            sut.ThenException<InvalidOperationException>();
+            sut.Then(x => x.OrderCancelled(ConferenceId: "conferences/1", OrderId: "orders/2",
+                Reason: "There are currently not enough free seats left; some might be pending, so please try again later"));
         }
 
         [TestMethod]
