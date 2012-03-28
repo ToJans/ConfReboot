@@ -35,10 +35,17 @@ namespace ConfReboot
         public void OrderSeats(string OrderId, int Amount)
         {
             if (Seats.Count(x => x.State != SeatStateEnum.Paid) < Amount)
+            {
                 OrderCancelled(OrderId, "There are not enough free seats left in this conference");
-            if (Seats.Count(x => x.State == SeatStateEnum.Free) < Amount)
+            }
+            else if (Seats.Count(x => x.State == SeatStateEnum.Free) < Amount)
+            {
                 OrderCancelled(OrderId, "There are currently not enough free seats left; some might be pending, so please try again later");
-            SeatsReserved(OrderId, Amount);
+            }
+            else
+            {
+                SeatsReserved(OrderId, Amount);
+            }
         }
 
         protected virtual void OrderCancelled(string OrderId, string Reason)
