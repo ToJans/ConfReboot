@@ -68,7 +68,7 @@ namespace ConfReboot.Specs
         }
 
         [TestMethod]
-        public void Confirming_payment_for_order()
+        public void Pay_order()
         {
             var sut = new SUTClass();
             sut.RegisterType<Order>();
@@ -80,8 +80,8 @@ namespace ConfReboot.Specs
             sut.Given(x => x.ConferenceRegistered(ConferenceId: "conferences/1", Name: "SomeConf", StartDate: startDate, MaxSeats: 100),
                       x => x.OrderRegistered(ConferenceId: "conferences/1", OrderId: "orders/1", Amount: 10),
                       x => x.SeatsReserved(ConferenceId: "conferences/1", OrderId: "orders/1", Amount: 10));
-            sut.When(x => x.ConfirmOrderPayment(OrderId: "orders/1"));
-            sut.Then(x => x.OrderPaymentConfirmed(ConferenceId: "conferences/1", OrderId: "orders/1"));
+            sut.When(x => x.PayOrder(OrderId: "orders/1"));
+            sut.Then(x => x.OrderPaid(ConferenceId: "conferences/1", OrderId: "orders/1"));
         }
 
         [TestMethod]
