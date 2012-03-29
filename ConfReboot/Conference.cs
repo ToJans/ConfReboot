@@ -36,11 +36,19 @@ namespace ConfReboot
         {
             if (Seats.Count(x => x.State != SeatStateEnum.Paid) < Amount)
             {
-                OrderCancelled(OrderId, "There are not enough free seats left in this conference");
+                var msg = string.Format("There are only {0}/{1} seats left in this conference and {2} of them are pending."
+                    , Seats.Count(x => x.State != SeatStateEnum.Paid)
+                    , Seats.Count()
+                    , Seats.Count(x => x.State == SeatStateEnum.Pending));
+                OrderCancelled(OrderId, msg);
             }
             else if (Seats.Count(x => x.State == SeatStateEnum.Free) < Amount)
             {
-                OrderCancelled(OrderId, "There are currently not enough free seats left; some might be pending, so please try again later");
+                var msg = string.Format("There are currently {0}/{1} seats left in this conference , but {2} are pending; please try again later."
+                    , Seats.Count(x => x.State != SeatStateEnum.Paid)
+                    , Seats.Count()
+                    , Seats.Count(x => x.State == SeatStateEnum.Pending));
+                OrderCancelled(OrderId, msg);
             }
             else
             {
@@ -73,7 +81,7 @@ namespace ConfReboot
                 this.Seats.Add(new SeatState());
         }
 
-        public virtual void OrderPaymentConfirmed(string OrderId)
+        public virtual void OrderPaid(string OrderId)
         {
             foreach (var seat in Seats.Where(x => x.State == SeatStateEnum.Pending && x.OrderId == OrderId))
             {

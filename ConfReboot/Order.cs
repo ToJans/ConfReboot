@@ -12,10 +12,10 @@
             OrderRegistered(ConferenceId, Amount);
         }
 
-        public void ConfirmOrderPayment()
+        public void PayOrder()
         {
             Guard.Against(IsPaid, "This order has already been paid");
-            OrderPaymentConfirmed(ConferenceId);
+            OrderPaid(ConferenceId);
         }
 
         public void CancelOrder(string Reason)
@@ -35,7 +35,7 @@
             IsPaid = false;
         }
 
-        protected virtual void OrderPaymentConfirmed(string ConferenceId)
+        protected virtual void OrderPaid(string ConferenceId)
         {
             IsPaid = true;
         }

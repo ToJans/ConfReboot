@@ -28,7 +28,7 @@ namespace ConfReboot.Specs
         }
 
         [TestMethod]
-        public void Order_seats_when_not_enough_seats_available()
+        public void Order_seats_when_not_enough_seats_available_but_some_are_pending()
         {
             var sut = new SUTClass();
             sut.RegisterType<Order>();
@@ -38,10 +38,33 @@ namespace ConfReboot.Specs
             var startdate = DateTime.Today;
 
             sut.Given(x => x.ConferenceRegistered(ConferenceId: "conferences/1", Name: "SomeConf", StartDate: startdate, MaxSeats: 100),
-                      x => x.SeatsReserved(ConferenceId: "conferences/1", OrderId: "orders/1", Amount: 94));
-            sut.When(x => x.RegisterOrder(ConferenceId: "conferences/1", OrderId: "orders/2", Amount: 10));
+                      x => x.SeatsReserved(ConferenceId: "conferences/1", OrderId: "orders/1", Amount: 84),
+                      x => x.OrderPaid(ConferenceId: "conferences/1", OrderId: "orders/1"),
+                      x => x.SeatsReserved(ConferenceId: "conferences/1", OrderId: "orders/2", Amount: 10)
+                      );
+            sut.When(x => x.RegisterOrder(ConferenceId: "conferences/1", OrderId: "orders/3", Amount: 11));
+            sut.Then(x => x.OrderCancelled(ConferenceId: "conferences/1", OrderId: "orders/3",
+                Reason: "There are currently 16/100 seats left in this conference , but 10 are pending; please try again later."));
+        }
+
+        [TestMethod]
+        public void Order_seats_when_not_enough_seats_available_but_none_are_pending()
+        {
+            var sut = new SUTClass();
+            sut.RegisterType<Order>();
+            sut.RegisterType<Conference>();
+            sut.RegisterType<ConferenceOrderSaga>();
+
+            var startdate = DateTime.Today;
+
+            sut.Given(x => x.ConferenceRegistered(ConferenceId: "conferences/1", Name: "SomeConf", StartDate: startdate, MaxSeats: 100),
+                      x => x.SeatsReserved(ConferenceId: "conferences/1", OrderId: "orders/1", Amount: 94),
+                      x => x.OrderPaid(ConferenceId: "conferences/1", OrderId: "orders/1"),
+                      x => x.SeatsReserved(ConferenceId: "conferences/1", OrderId: "orders/2", Amount: 2)
+                      );
+            sut.When(x => x.RegisterOrder(ConferenceId: "conferences/1", OrderId: "orders/2", Amount: 11));
             sut.Then(x => x.OrderCancelled(ConferenceId: "conferences/1", OrderId: "orders/2",
-                Reason: "There are currently not enough free seats left; some might be pending, so please try again later"));
+                Reason: "There are only 6/100 seats left in this conference and 2 of them are pending."));
         }
 
         [TestMethod]
