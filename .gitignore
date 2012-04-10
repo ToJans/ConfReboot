@@ -5,4 +5,5 @@
 [pP]ackages/*
 *.testsettings
 *.vsmdi
+ConfReboot.Azure/csx/Debug/*
 

@@ -8,8 +8,8 @@ namespace ConfReboot.Infrastructure
 {
     public class Message : DynamicObject
     {
-        public IEnumerable<KeyValuePair<string, object>> Parameters;
         public String MethodName;
+        public IEnumerable<KeyValuePair<string, object>> Parameters;
 
         public Message() { }
 
